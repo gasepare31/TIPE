@@ -72,7 +72,6 @@ let nbre_liens (m : monument) : int =
     | [] -> 0 
   in len voisins
 
-
 (* prends un nom et renvoie le monument associé *)
 let rec nom_to_monument (nom : string) (liste : monument list): monument = 
   match liste with
@@ -87,8 +86,9 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
 
   let meilleur_chemin (c1 : (string list * float)option ) (c2 : (string list * float) option) : (string list * float) option= 
     match c1, c2 with 
-    | Some (chem1, dist1), Some (chem2, dist2) -> if dist1 > dist2 then c1 else c2
-    | Some (chem1, dist1), None | None, Some (chem1, dist1) -> c1
+    | Some (chem1, dist1), Some (chem2, dist2) -> if dist1 < dist2 then c1 else c2
+    | Some (chem1, dist1), None -> c1
+    | None, Some (chem1, dist1) -> c2
     | None, None -> None
   in
 
@@ -101,16 +101,20 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
   and explore_voisins (pt_actuel : string) (voisins : (string * float) list) (visite : string list) : (string list * float) option = 
     match voisins with
     | [] -> None
-    | (voisin, distance) :: q -> if List.mem voisin visite (* list.mem revoie true si voisin est dans visite *)
-      then explore_voisins pt_actuel q visite
-      else
-         match chemin_pt voisin visites with 
-         
+    | (voisin1, distance1) :: q -> if List.mem voisin1 visite (* list.mem revoie true si voisin est dans visite *)
+      then explore_voisins pt_actuel q (voisin1::visite)
+      else begin
+         match (chemin_pt voisin1 visite) with (* distanceA1 correspond à la distance entre l'arrivée et le voisin1 *)
+         | Some (chemin1, distanceA1)  -> meilleur_chemin (Some (pt_actuel :: chemin1, distanceA1 +. distance1)) (explore_voisins pt_actuel q (voisin1::visite))
+         | None -> explore_voisins pt_actuel q visite
+      end 
+    in
+  match chemin_pt id_depart [] with
+  | Some (chemin, dist) -> (id_depart :: chemin, dist)
+  | None -> failwith "aucun chemin trouvé"
 
 
-
-
-
-
-
-
+let time f : float =
+  let a = Sys.time() in
+  f; 
+  let b = Sys.time() in (b-.a)
