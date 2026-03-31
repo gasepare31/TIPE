@@ -52,9 +52,33 @@ let voisins = [|
 
 let n = Array.length noms
 
+type monument = (int * float) list * (float * float) (* est-ce qu'on met qdmm le 
+   numéro du monument considéré ou ce sera juste l'indice ? *)
+
 (* renvoie l'indice du nom *)
 let nom_to_num (nom : string) (noms : string array) : int option = 
   Array.find_index (fun x -> x = nom) noms (* find_index revoie le rang du premier element qui satisfait la fonction, ici x -> x = nom *)
 
 let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monument) : string list * float =
+  (* Compare deux chemins optionnels et retourne le plus court.
+   Si l'un des deux est None (inexistant), retourne l'autre.
+   Si les deux sont None, retourne None. *)
+   let meilleur_chemin (c1 : (int list * float)option ) (c2 : (int list * float) option) : (int list * float) option= 
+   match c1, c2 with 
+   | Some (chem1, dist1), Some (chem2, dist2) -> if dist1 < dist2 then c1 else c2
+   | Some (chem1, dist1), None -> c1
+   | None, Some (chem1, dist1) -> c2
+   | None, None -> None
+ in 
+
+ (* Cherche récursivement un chemin depuis pt_actuel jusqu'à id_arrivee.
+   visite contient les points déjà visités pour éviter les cycles.
+   Retourne Some (chemin, distance_totale) si un chemin existe, None sinon.*)
+   let rec chemin_pt (pt_actuel : int) (visite : int list) : (int list * float) option = 
+    if pt_actuel = id_arrivee then Some ([], 0.0)
+    else 
+      let _, voisins, _ = nom_to_monument pt_actuel map in 
+      explore_voisins pt_actuel voisins (pt_actuel :: visite) 
+
+  
   
