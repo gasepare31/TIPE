@@ -56,21 +56,22 @@ type monument = (int * float) list * (float * float) (* est-ce qu'on met qdmm le
    numéro du monument considéré ou ce sera juste l'indice ? *)
 
 (* renvoie l'indice du nom *)
-let nom_to_num (nom : string) (noms : string array) : int option = 
-  Array.find_index (fun x -> x = nom) noms (* find_index revoie le rang du premier element qui satisfait la fonction, ici x -> x = nom *)
+let nom_to_num (nom : string) (noms : string array) : int  = 
+  match Array.find_index (fun x -> x = nom) noms with (* find_index revoie le rang du premier element qui satisfait la fonction, ici x -> x = nom *)
+  | Some (x) -> x
+  | None -> failwith "nom pas dans la liste"
 
-let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monument) : string list * float =
-  (* Compare deux chemins optionnels et retourne le plus court.
+(* Compare deux chemins optionnels et retourne le plus court.
    Si l'un des deux est None (inexistant), retourne l'autre.
    Si les deux sont None, retourne None. *)
-   let meilleur_chemin (c1 : (int list * float)option ) (c2 : (int list * float) option) : (int list * float) option= 
+let meilleur_chemin (c1 : (int list * float)option ) (c2 : (int list * float) option) : (int list * float) option= 
    match c1, c2 with 
    | Some (chem1, dist1), Some (chem2, dist2) -> if dist1 < dist2 then c1 else c2
    | Some (chem1, dist1), None -> c1
    | None, Some (chem1, dist1) -> c2
    | None, None -> None
- in 
 
+let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monument) : string list * float =
  (* Cherche récursivement un chemin depuis pt_actuel jusqu'à id_arrivee.
    visite contient les points déjà visités pour éviter les cycles.
    Retourne Some (chemin, distance_totale) si un chemin existe, None sinon.*)
@@ -79,6 +80,29 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
     else 
       let _, voisins, _ = nom_to_monument pt_actuel map in 
       explore_voisins pt_actuel voisins (pt_actuel :: visite) 
+
+
+  let num_depart = nom_to_num depart noms in
+  let num_arrivee = nom_to_num arrivee noms in
+
+  let chemin = ref (Array.make n (-1)) in
+  !chemin.(0) <- num_depart;
+  let distance = ref 0. in
+  let indice = ref 1 in
+
+  let meilleur_chemin = ref [||] in
+  let meilleur_distance = ref Float.infinity in
+
+  let pt_actuel = ref num_depart in
+  let visite = ref (Array.make n false) in 
+
+  let rec explore (pt_actuel : int) : unit =
+    if pt_actuel = num_arrivee then begin
+      if !distance < !meilleur_distance then
+        meilleur_distance := !distance;
+        meilleur_chemin := !chemin.(!indice) <- pt_actuel
+      if 
+
 
   
   
