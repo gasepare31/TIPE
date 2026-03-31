@@ -119,7 +119,7 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
       end 
     in
   match chemin_pt id_depart [] with
-  | Some (chemin, dist) -> (id_depart :: chemin, dist)
+  | Some (chemin, dist) -> (chemin, dist)
   | None -> failwith "aucun chemin trouvé"
 
 
