@@ -84,6 +84,9 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
   let id_depart, _, _ = depart in 
   let id_arrivee, _, _ = arrivee in 
 
+  (* Compare deux chemins optionnels et retourne le plus court.
+   Si l'un des deux est None (inexistant), retourne l'autre.
+   Si les deux sont None, retourne None. *)
   let meilleur_chemin (c1 : (string list * float)option ) (c2 : (string list * float) option) : (string list * float) option= 
     match c1, c2 with 
     | Some (chem1, dist1), Some (chem2, dist2) -> if dist1 < dist2 then c1 else c2
@@ -92,15 +95,21 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
     | None, None -> None
   in
 
+  (* Cherche récursivement un chemin depuis pt_actuel jusqu'à id_arrivee.
+   visite contient les points déjà visités pour éviter les cycles.
+   Retourne Some (chemin, distance_totale) si un chemin existe, None sinon.*)
   let rec chemin_pt (pt_actuel : string) (visite : string list) : (string list * float) option = 
     if pt_actuel = id_arrivee then Some ([], 0.0)
     else 
       let _, voisins, _ = nom_to_monument pt_actuel map in 
       explore_voisins pt_actuel voisins (pt_actuel :: visite) 
 
+      (* Parcourt la liste des voisins de pt_actuel et retourne le meilleur chemin
+      trouvé parmi tous les voisins non encore visités.
+      Ignore les voisins déjà visités pour éviter les boucles infinies. *)
   and explore_voisins (pt_actuel : string) (voisins : (string * float) list) (visite : string list) : (string list * float) option = 
     match voisins with
-    | [] -> None
+    | [] -> None (* plus de voisins à explorer -> pas de chemins depuis pt_actuel *)
     | (voisin1, distance1) :: q -> if List.mem voisin1 visite (* list.mem revoie true si voisin est dans visite *)
       then explore_voisins pt_actuel q (voisin1::visite)
       else begin
@@ -114,7 +123,19 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
   | None -> failwith "aucun chemin trouvé"
 
 
+(* mesure le temps d'execution *)
 let time f : float =
   let a = Sys.time() in
-  f; 
+  f(); 
   let b = Sys.time() in (b-.a)
+
+let test()=
+  assert(chemin_force_brute monuments (nom_to_monument "Tour Eiffel" monuments ) 
+  (nom_to_monument "Musée d'Orsay" monuments) = (["Tour Eiffel" ; "Musée d'Orsay"], 3.6))
+
+
+
+
+
+
+
