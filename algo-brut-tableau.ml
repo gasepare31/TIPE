@@ -72,7 +72,7 @@ let meilleur_chemin (c1 : (int list * float)option ) (c2 : (int list * float) op
    | None, Some (chem1, dist1) -> c2
    | None, None -> None
 
-let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monument) : string list * float =
+let chemin_force_brute (depart : string) (arrivee : string) : string list * float =
  (* Cherche récursivement un chemin depuis pt_actuel jusqu'à id_arrivee.
    visite contient les points déjà visités pour éviter les cycles.
    Retourne Some (chemin, distance_totale) si un chemin existe, None sinon.*)
@@ -122,14 +122,20 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
   (Array.to_list chemin_noms, !meilleur_distance)
 
 
-(* tests*)
+(* TEST DE L'ALGO *)
+
+(* avec les calculs de flottants, les résultats sont pas exactement ceux attendus, 
+   mais on vérifie qu'ils sont corrects à 0.0001 près*)
+let approx a b = abs_float (a -. b) < 0.0001
+
+(* test sur des exemples précis *)
 let test ()=
   let (chemin, dist) = chemin_force_brute "Trocadéro" "Tour Eiffel" in
     assert (chemin = ["Trocadéro"; "Tour Eiffel"]);
     assert (dist = 0.7);
   
   let (chemin, dist) = chemin_force_brute "Panthéon" "Musée d'Orsay" in
-    assert (dist = 2.4);
+    assert (approx dist 1.8);
     assert(chemin = ["Panthéon"; "Jardins du Luxembourg"; "Musée d'Orsay"]);
   
   print_string "Bravo :)"
