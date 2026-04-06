@@ -97,12 +97,31 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
   let visite = ref (Array.make n false) in 
 
   let rec explore (pt_actuel : int) : unit =
+    (* une fois arrivé à la destination souhaitée, on compare la distance totale avec la meilleur distance en mémoire, et si elle est meilleure, on la remplace, et le chemin aussi*)
     if pt_actuel = num_arrivee then begin
-      if !distance < !meilleur_distance then
+      if !distance < !meilleur_distance then begin 
         meilleur_distance := !distance;
-        meilleur_chemin := !chemin.(!indice) <- pt_actuel
-      if 
+        !chemin.(!indice) <- pt_actuel;
+        meilleur_chemin := Array.sub !chemin 0 (!indice) (* recrée un tableau à partir de !chemin, allant de l'indice 0 à !indice*)
+      end
+    end
+    (* si on est pas sur la destination souhaitée
+    else if not !visite.(pt_actuel) then begin
+      !visite.(pt_actuel) <- true; (* on dit qu'on a visité le pt actuel *)
+      let list_voisins = voisins.(pt_actuel) in (* on récupère la liste des voisins du point actuel, sous forme d'une liste de tuples avec indice et distance *) 
+      for i = 0 to Array.length list_voisins - 1 do (* pour chaque voisin *)
+        let voisin_idx, dist = list_voisins.(i) in (* on sépare l'indice du voisin et sa distance dans deux variables *)
+        distance := !distance +. dist; (* on actualise la distance du chemin parcouru *)
+        !chemin.(!indice) <- voisin_idx; (* on ajoute le voisin au chemin parcouru *)
+        indice := !indice + 1; (* l'indice augmente parce qu'on a ajouté un point au chemin *)
+        explore voisin_idx; (* enfin la RÉCURSIVITÉ !! On explore ensuite à partir de ce voisin *)
+        indice := !indice - 1; (* une fois fini, si le chemin était plus court que meilleur_chemin, il aura été actualisé, mais comme on va passer à l'autre voisin, il faut retirer cette ville de notre chemin, pour cela on réduit l'indice, comme ca quand on va ajouter la prochaine ville, ça va l'écraser *)
+        distance := !distance -. dist (* et pour les mêmes raisons on soustrait la distance *)
+      done;
+      !visite.(pt_actuel) <- false 
+    end
+  in
 
-
-  
-  
+  explore num_depart();
+  let chemin_noms = Array.map (fun idx -> noms.(idx)) !meilleur_chemin in
+  (Array.to_list chemins_noms, !meilleur_distance)
