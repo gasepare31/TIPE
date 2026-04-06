@@ -88,7 +88,6 @@ let chemin_force_brute (depart : string) (arrivee : string) : string list * floa
   let meilleur_chemin = ref [||] in
   let meilleur_distance = ref Float.infinity in
 
-  let pt_actuel = ref num_depart in
   let visite = ref (Array.make n false) in 
 
   let rec explore (pt_actuel : int) : unit =
@@ -118,6 +117,9 @@ let chemin_force_brute (depart : string) (arrivee : string) : string list * floa
   in
 
   explore num_depart ;
+  if !meilleur_distance = Float.infinity then
+    ([], Float.infinity)
+  else
   let chemin_noms = Array.map (fun idx -> noms.(idx)) !meilleur_chemin in
   (Array.to_list chemin_noms, !meilleur_distance)
 
@@ -137,6 +139,6 @@ let test ()=
   let (chemin, dist) = chemin_force_brute "Panthéon" "Musée d'Orsay" in
     assert (approx dist 1.8);
     assert(chemin = ["Panthéon"; "Jardins du Luxembourg"; "Musée d'Orsay"]);
-  
+
   print_string "Bravo :)"
 
