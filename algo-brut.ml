@@ -132,10 +132,3 @@ let time f : float =
 let test()=
   assert(chemin_force_brute monuments (nom_to_monument "Tour Eiffel" monuments ) 
   (nom_to_monument "Musée d'Orsay" monuments) = (["Tour Eiffel" ; "Musée d'Orsay"], 3.6))
-
-
-
-
-
-
-
