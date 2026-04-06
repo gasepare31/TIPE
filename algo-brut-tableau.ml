@@ -75,12 +75,6 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
  (* Cherche récursivement un chemin depuis pt_actuel jusqu'à id_arrivee.
    visite contient les points déjà visités pour éviter les cycles.
    Retourne Some (chemin, distance_totale) si un chemin existe, None sinon.*)
-   let rec chemin_pt (pt_actuel : int) (visite : int list) : (int list * float) option = 
-    if pt_actuel = id_arrivee then Some ([], 0.0)
-    else 
-      let _, voisins, _ = nom_to_monument pt_actuel map in 
-      explore_voisins pt_actuel voisins (pt_actuel :: visite) 
-
 
   let num_depart = nom_to_num depart noms in
   let num_arrivee = nom_to_num arrivee noms in
@@ -122,6 +116,20 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
     end
   in
 
-  explore num_depart();
+  explore num_depart ;
   let chemin_noms = Array.map (fun idx -> noms.(idx)) !meilleur_chemin in
-  (Array.to_list chemins_noms, !meilleur_distance)
+  (Array.to_list chemin_noms, !meilleur_distance)
+
+
+(* tests*)
+let test ()=
+  let (chemin, dist) = chemin_force_brute "Trocadéro" "Tour Eiffel" in
+    assert (chemin = ["Trocadéro"; "Tour Eiffel"]);
+    assert (dist = 0.7)
+  
+  let (chemin, dist) = chemin_force_brute "Panthéon" "Musée d'Orsay" in
+    assert (dist = 2.4);
+    assert(chemin = ["Panthéon"; "Jardins du Luxembourg"; "Musée d'Orsay"])
+  
+  print_string "Bravo :)"
+
