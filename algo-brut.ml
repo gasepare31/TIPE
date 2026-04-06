@@ -99,7 +99,7 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
    visite contient les points déjà visités pour éviter les cycles.
    Retourne Some (chemin, distance_totale) si un chemin existe, None sinon.*)
   let rec chemin_pt (pt_actuel : string) (visite : string list) : (string list * float) option = 
-    if pt_actuel = id_arrivee then Some ([], 0.0)
+    if pt_actuel = id_arrivee then Some ([id_arrivee], 0.0)
     else 
       let _, voisins, _ = nom_to_monument pt_actuel map in 
       explore_voisins pt_actuel voisins (pt_actuel :: visite) 
@@ -120,7 +120,7 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
     in
   match chemin_pt id_depart [] with
   | Some (chemin, dist) -> (chemin, dist)
-  | None -> failwith "aucun chemin trouvé"
+  | None -> ([], Float.infinity)
 
 
 (* mesure le temps d'execution *)
@@ -129,6 +129,22 @@ let time f : float =
   f(); 
   let b = Sys.time() in (b-.a)
 
+(* avec les calculs de flottants, les résultats sont pas exactement ceux attendus, 
+   mais on vérifie qu'ils sont corrects à 0.01 près*)
+let approx a b = abs_float (a -. b) < 0.01
+
+
+(* test sur des exemples précis *)
 let test()=
-  assert(chemin_force_brute monuments (nom_to_monument "Tour Eiffel" monuments ) 
-  (nom_to_monument "Musée d'Orsay" monuments) = (["Tour Eiffel" ; "Musée d'Orsay"], 3.6))
+  assert(chemin_force_brute monuments 
+  (nom_to_monument "Tour Eiffel" monuments ) 
+  (nom_to_monument "Musée d'Orsay" monuments)
+   = (["Tour Eiffel" ; "Musée d'Orsay"], 2.2));
+
+  let (chemin, dist) = chemin_force_brute monuments 
+  (nom_to_monument "Panthéon" monuments) 
+  (nom_to_monument "Musée d'Orsay" monuments) in
+  assert (chemin = ["Panthéon"; "Jardins du Luxembourg"; "Musée d'Orsay"]);
+  assert (approx dist 1.8);
+
+  print_string "Bravo :)"

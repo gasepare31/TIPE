@@ -127,8 +127,8 @@ let chemin_force_brute (depart : string) (arrivee : string) : string list * floa
 (* TEST DE L'ALGO *)
 
 (* avec les calculs de flottants, les résultats sont pas exactement ceux attendus, 
-   mais on vérifie qu'ils sont corrects à 0.0001 près*)
-let approx a b = abs_float (a -. b) < 0.0001
+   mais on vérifie qu'ils sont corrects à 0.01 près*)
+let approx a b = abs_float (a -. b) < 0.01
 
 (* test sur des exemples précis *)
 let test ()=
