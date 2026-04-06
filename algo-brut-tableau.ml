@@ -57,9 +57,10 @@ type monument = (int * float) list * (float * float) (* est-ce qu'on met qdmm le
 
 (* renvoie l'indice du nom *)
 let nom_to_num (nom : string) (noms : string array) : int  = 
-  match Array.find_index (fun x -> x = nom) noms with (* find_index revoie le rang du premier element qui satisfait la fonction, ici x -> x = nom *)
-  | Some (x) -> x
-  | None -> failwith "nom pas dans la liste"
+  let result = ref (-1) in
+  Array.iteri (fun i x -> if x = nom then result := i) noms;
+  if !result = -1 then failwith "nom pas dans la liste"
+  else !result
 
 (* Compare deux chemins optionnels et retourne le plus court.
    Si l'un des deux est None (inexistant), retourne l'autre.
@@ -125,11 +126,11 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
 let test ()=
   let (chemin, dist) = chemin_force_brute "Trocadéro" "Tour Eiffel" in
     assert (chemin = ["Trocadéro"; "Tour Eiffel"]);
-    assert (dist = 0.7)
+    assert (dist = 0.7);
   
   let (chemin, dist) = chemin_force_brute "Panthéon" "Musée d'Orsay" in
     assert (dist = 2.4);
-    assert(chemin = ["Panthéon"; "Jardins du Luxembourg"; "Musée d'Orsay"])
+    assert(chemin = ["Panthéon"; "Jardins du Luxembourg"; "Musée d'Orsay"]);
   
   print_string "Bravo :)"
 
