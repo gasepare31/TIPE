@@ -105,7 +105,7 @@ let chemin_force_brute (map : monument list) (depart : monument) (arrivee : monu
         meilleur_chemin := Array.sub !chemin 0 (!indice) (* recrée un tableau à partir de !chemin, allant de l'indice 0 à !indice*)
       end
     end
-    (* si on est pas sur la destination souhaitée
+    (* si on est pas sur la destination souhaitée *)
     else if not !visite.(pt_actuel) then begin
       !visite.(pt_actuel) <- true; (* on dit qu'on a visité le pt actuel *)
       let list_voisins = voisins.(pt_actuel) in (* on récupère la liste des voisins du point actuel, sous forme d'une liste de tuples avec indice et distance *) 
