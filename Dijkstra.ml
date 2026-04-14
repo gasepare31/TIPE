@@ -1,5 +1,3 @@
-(* ===== DONNÉES DU GRAPHE (ton code existant) ===== *)
-
 let noms = [|
   "Tour Eiffel";         (* 0  *)
   "Arc de Triomphe";     (* 1  *)
@@ -93,25 +91,22 @@ let trouver_min_non_visite (distances : float array) (visite : bool array) : int
 
 (*compare le nouvelle distance (issue du parent optimal) avec la distance initiale, et met à jour le chemin si besoin *)
 let comparaison (noeud : int) (distances : float array) (parents : int array) (visite : bool array) (voisins : (int * float) array array) : unit =
-  let aretes_noeud = voisins.(noeud) in
-  Array.iter (fun (voisin, poids) ->
+  let tab_noeud_voisins = voisins.(noeud) in
+  Array.iter (fun (voisin, val_arete) ->
     if not visite.(voisin) then begin
-      let nouvelle_distance = distances.(noeud) +. poids in
+      let nouvelle_distance = distances.(noeud) +. val_arete in
       if nouvelle_distance < distances.(voisin) then begin
         distances.(voisin) <- nouvelle_distance;
         parents.(voisin) <- noeud
       end
     end
-  ) aretes_noeud
+  ) tab_noeud_voisins
 
 
-(* Étape 4️⃣ : Algorithme principal de Dijkstra
-   Boucle jusqu'à avoir trouvé les plus courts chemins vers tous les nœuds accessibles
-*)
+(* algo final djikstra
 let dijkstra (depart : int) (arrivee : int) (n : int) (voisins : (int * float) array array) : (int list * float) option =
   let (distances, parents, visite) = dijkstra_init depart n in
   
-  (* Boucle principale : traiter les n nœuds *)
   for _ = 0 to n - 1 do
     match trouver_min_non_visite distances visite with
     | None -> ()  (* Tous les nœuds accessibles ont été traités *)
@@ -120,11 +115,10 @@ let dijkstra (depart : int) (arrivee : int) (n : int) (voisins : (int * float) a
         comparaison noeud distances parents visite voisins
   done;
   
-  (* Vérifier si on a trouvé un chemin *)
   if distances.(arrivee) = Float.infinity then
     None
   else
-    (* Reconstruire le chemin en remontant les parents *)
+    (* Reconstruit le chemin en remontant les parents avec une liste acc *)
     let rec construire_chemin noeud acc =
       if noeud = -1 then acc
       else construire_chemin parents.(noeud) (noeud :: acc)
