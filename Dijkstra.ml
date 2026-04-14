@@ -51,6 +51,8 @@ let voisins = [|
 
 let n = Array.length noms
 
+
+(* complexité en O(n) avec n la longueur de la liste*)
 let nom_to_num (nom : string) (noms : string array) : int  = 
   let rec search i =
     if i >= Array.length noms then
@@ -67,7 +69,8 @@ let nom_to_num (nom : string) (noms : string array) : int  =
 (* Crée les structures pour stocker :
    - distances[i] = distance minimale connue pour atteindre le nœud i
    - parents[i] = le nœud d'où on vient pour atteindre i
-   - visite[i] = true si on a déjà traité le nœud i *)
+   - visite[i] = true si on a déjà traité le nœud i 
+   Complexité en *)
 let dijkstra_init (depart : int) (n : int) : float array * int array * bool array =
   let distances = Array.make n Float.infinity in
   let parents = Array.make n (-1) in
@@ -77,6 +80,7 @@ let dijkstra_init (depart : int) (n : int) : float array * int array * bool arra
 
 
 (* Trouve le nœud non visité avec la plus petite distance *) 
+(* Complexité en O(len distance) *)
 let trouver_min_non_visite (distances : float array) (visite : bool array) : int option =
   let min_dist = ref Float.infinity in
   let min_idx = ref (-1) in
