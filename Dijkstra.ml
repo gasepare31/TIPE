@@ -53,8 +53,6 @@ let voisins = [|
 
 let n = Array.length noms
 
-(* ===== UTILITAIRES (à garder) ===== *)
-
 let nom_to_num (nom : string) (noms : string array) : int  = 
   let rec search i =
     if i >= Array.length noms then
@@ -67,14 +65,11 @@ let nom_to_num (nom : string) (noms : string array) : int  =
   search 0
 
 
-(* ===== ALGORITHME DE DIJKSTRA ===== *)
 
-(* Étape 1️⃣ : Initialisation
-   Crée les structures pour stocker :
+(* Crée les structures pour stocker :
    - distances[i] = distance minimale connue pour atteindre le nœud i
    - parents[i] = le nœud d'où on vient pour atteindre i
-   - visite[i] = true si on a déjà traité le nœud i
-*)
+   - visite[i] = true si on a déjà traité le nœud i *)
 let dijkstra_init (depart : int) (n : int) : float array * int array * bool array =
   let distances = Array.make n Float.infinity in
   let parents = Array.make n (-1) in
@@ -83,9 +78,7 @@ let dijkstra_init (depart : int) (n : int) : float array * int array * bool arra
   (distances, parents, visite)
 
 
-(* Étape 2️⃣ : Trouver le nœud non visité avec la plus petite distance
-   C'est la clé de Dijkstra : à chaque étape, on travaille sur le plus prometteur !
-*)
+(* Trouve le nœud non visité avec la plus petite distance *) 
 let trouver_min_non_visite (distances : float array) (visite : bool array) : int option =
   let min_dist = ref Float.infinity in
   let min_idx = ref (-1) in
@@ -98,10 +91,8 @@ let trouver_min_non_visite (distances : float array) (visite : bool array) : int
   if !min_idx = -1 then None else Some !min_idx
 
 
-(* Étape 3️⃣ : Relaxation des arêtes
-   Si on trouve un chemin plus court vers un voisin, on le met à jour !
-*)
-let relaxer_aretes (noeud : int) (distances : float array) (parents : int array) (visite : bool array) (voisins : (int * float) array array) : unit =
+(*compare le nouvelle distance (issue du parent optimal) avec la distance initiale, et met à jour le chemin si besoin *)
+let comparaison (noeud : int) (distances : float array) (parents : int array) (visite : bool array) (voisins : (int * float) array array) : unit =
   let aretes_noeud = voisins.(noeud) in
   Array.iter (fun (voisin, poids) ->
     if not visite.(voisin) then begin
@@ -126,7 +117,7 @@ let dijkstra (depart : int) (arrivee : int) (n : int) (voisins : (int * float) a
     | None -> ()  (* Tous les nœuds accessibles ont été traités *)
     | Some noeud ->
         visite.(noeud) <- true;
-        relaxer_aretes noeud distances parents visite voisins
+        comparaison noeud distances parents visite voisins
   done;
   
   (* Vérifier si on a trouvé un chemin *)
@@ -142,20 +133,6 @@ let dijkstra (depart : int) (arrivee : int) (n : int) (voisins : (int * float) a
     Some (chemin, distances.(arrivee))
 
 
-(* ===== INTERFACE UTILISATEUR ===== *)
-
-(* Version avec noms (comme ta force brute) *)
-let chemin_dijkstra (depart : string) (arrivee : string) : string list * float =
-  let num_depart = nom_to_num depart noms in
-  let num_arrivee = nom_to_num arrivee noms in
-  
-  match dijkstra num_depart num_arrivee n voisins with
-  | None -> 
-      Printf.printf "❌ Aucun chemin n'existe entre %s et %s\n" depart arrivee;
-      ([], Float.infinity)
-  | Some (chemin_indices, distance) ->
-      let chemin_noms = List.map (fun idx -> noms.(idx)) chemin_indices in
-      (chemin_noms, distance)
 
 
 let approx a b = abs_float (a -. b) < 0.01
