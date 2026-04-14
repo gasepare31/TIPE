@@ -103,7 +103,7 @@ let comparaison (noeud : int) (distances : float array) (parents : int array) (v
   ) tab_noeud_voisins
 
 
-(* algo final djikstra
+(* algo final djikstra *)
 let dijkstra (depart : int) (arrivee : int) (n : int) (voisins : (int * float) array array) : (int list * float) option =
   let (distances, parents, visite) = dijkstra_init depart n in
   
