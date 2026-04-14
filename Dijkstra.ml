@@ -49,10 +49,7 @@ let voisins = [|
   [|(0, 0.4)|];                                   (* 13 Champ-de-Mars *)
 |]
 
-let n = Array.length noms
 
-
-(* complexité en O(n) avec n la longueur de la liste*)
 let nom_to_num (nom : string) (noms : string array) : int  = 
   let rec search i =
     if i >= Array.length noms then
@@ -69,8 +66,7 @@ let nom_to_num (nom : string) (noms : string array) : int  =
 (* Crée les structures pour stocker :
    - distances[i] = distance minimale connue pour atteindre le nœud i
    - parents[i] = le nœud d'où on vient pour atteindre i
-   - visite[i] = true si on a déjà traité le nœud i 
-   Complexité en *)
+   - visite[i] = true si on a déjà traité le nœud i *)
 let dijkstra_init (depart : int) (n : int) : float array * int array * bool array =
   let distances = Array.make n Float.infinity in
   let parents = Array.make n (-1) in
@@ -80,7 +76,6 @@ let dijkstra_init (depart : int) (n : int) : float array * int array * bool arra
 
 
 (* Trouve le nœud non visité avec la plus petite distance *) 
-(* Complexité en O(len distance) *)
 let trouver_min_non_visite (distances : float array) (visite : bool array) : int option =
   let min_dist = ref Float.infinity in
   let min_idx = ref (-1) in
@@ -107,8 +102,13 @@ let comparaison (noeud : int) (distances : float array) (parents : int array) (v
   ) tab_noeud_voisins
 
 
-(* algo final djikstra *)
-let dijkstra (depart : int) (arrivee : int) (n : int) (voisins : (int * float) array array) : (int list * float) option =
+(* algo final dijkstra *)
+let dijkstra (departS : string) (arriveeS : string) : (int list * float) option =
+  let arrivee=nom_to_num arriveeS noms in
+  let depart=nom_to_num departS noms in
+  let n = Array.length noms in
+ 
+
   let (distances, parents, visite) = dijkstra_init depart n in
   
   for _ = 0 to n - 1 do
@@ -136,12 +136,16 @@ let dijkstra (depart : int) (arrivee : int) (n : int) (voisins : (int * float) a
 let approx a b = abs_float (a -. b) < 0.01
 
 let test ()=
-  let (chemin, dist) = chemin_force_brute "Trocadéro" "Tour Eiffel" in
-    assert (chemin = ["Trocadéro"; "Tour Eiffel"]);
-    assert (dist = 0.7);
-  
-  let (chemin, dist) = chemin_force_brute "Panthéon" "Musée d'Orsay" in
+  match dijkstra "Trocadéro" "Tour Eiffel" with
+  | None -> assert false
+  | Some (chemin, dist) ->
+    assert (chemin = [12; 0]);
+    assert (approx dist 0.7);
+
+  match dijkstra "Panthéon" "Musée d'Orsay" with
+  | None -> assert false
+  | Some (chemin, dist) ->
     assert (approx dist 1.8);
-    assert(chemin = ["Panthéon"; "Jardins du Luxembourg"; "Musée d'Orsay"]);
+    assert (chemin = [9; 10; 4]);
 
   print_string "Bravo :)"
