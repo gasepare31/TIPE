@@ -131,7 +131,11 @@ let dijkstra (departS : string) (arriveeS : string) : (int list * float) option 
     Some (chemin, distances.(arrivee))
 
 
+(* renvoie le résultat de l'algorithme de dijkstra sous la forme d'un fichier .txt
+let main() =
+    let resul=open_out("resultats_dijkstra.txt");
 
+    output_string(dijkstra()) *)
 
 let approx a b = abs_float (a -. b) < 0.01
 
