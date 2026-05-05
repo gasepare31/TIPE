@@ -166,7 +166,7 @@ let main() =
     |None -> Printf.fprintf resul "NULL"
     |Some(chemin,dist) -> Printf.fprintf resul "(";
                           liste_write resul chemin;
-                          Printf.fprintf resul "), %d" dist;
+                          Printf.fprintf resul "), %f" dist
 
 
 
