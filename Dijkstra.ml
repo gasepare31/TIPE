@@ -135,7 +135,7 @@ let dijkstra (departS : string) (arriveeS : string) : (int list * float) option 
 let rec liste_write (filename : out_channel) (distance : int list) : unit =
   match distance with
   | [] -> ()
-  | a::b -> Printf.fprintf filename "%d" a; liste_write filename b
+  | a::b -> Printf.fprintf filename "%d " a; liste_write filename b
 
 let approx a b = abs_float (a -. b) < 0.01
 
