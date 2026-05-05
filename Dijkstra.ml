@@ -131,7 +131,11 @@ let dijkstra (departS : string) (arriveeS : string) : (int list * float) option 
     Some (chemin, distances.(arrivee))
 
 
-
+(* écrit dans le fichier filename la liste distance *)
+let rec liste_write (filename : out_channel) (distance : int list) : unit =
+  match distance with
+  | [] -> ()
+  | a::b -> Printf.fprintf filename "%d" a; liste_write filename b
 
 let approx a b = abs_float (a -. b) < 0.01
 
@@ -160,9 +164,11 @@ let main() =
     let arrivee=read_line() in
     match dijkstra depart arrivee with
     |None -> Printf.fprintf resul "NULL"
-    |Some(chemin,dist) -> Printf.fprintf resul 
-    let resul=open_out "resultats_dijkstra.txt" in
-    Printf.fprintf resul "%" (dijkstra "Tour Eiffel" "Panthéon")
+    |Some(chemin,dist) -> Printf.fprintf resul "(";
+                          liste_write resul chemin;
+                          Printf.fprintf resul "), %d" dist;
+
+
 
 
 let _ = main()
