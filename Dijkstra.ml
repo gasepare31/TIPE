@@ -131,11 +131,7 @@ let dijkstra (departS : string) (arriveeS : string) : (int list * float) option 
     Some (chemin, distances.(arrivee))
 
 
-(* renvoie le résultat de l'algorithme de dijkstra sous la forme d'un fichier .txt
-let main() =
-    let resul=open_out("resultats_dijkstra.txt");
 
-    output_string(dijkstra()) *)
 
 let approx a b = abs_float (a -. b) < 0.01
 
@@ -153,3 +149,20 @@ let test ()=
     assert (chemin = [9; 10; 4]);
 
   print_string "Bravo :)"
+
+
+(* renvoie le résultat de l'algorithme de dijkstra sous la forme d'un fichier .txt *)
+let main() =
+    let resul=open_out "resultats_dijkstra.txt" in
+    print_string "Point de départ : ";
+    let depart=read_line() in
+    print_string "Point d'arrivée : ";
+    let arrivee=read_line() in
+    match dijkstra depart arrivee with
+    |None -> Printf.fprintf resul "NULL"
+    |Some(chemin,dist) -> Printf.fprintf resul 
+    let resul=open_out "resultats_dijkstra.txt" in
+    Printf.fprintf resul "%" (dijkstra "Tour Eiffel" "Panthéon")
+
+
+let _ = main()
