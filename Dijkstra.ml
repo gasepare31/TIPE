@@ -50,6 +50,24 @@ let voisins = [|
 |]
 
 
+let get_column_by_name (filename : string) (colonne : string) : array =
+  let rows = Csv.load ~separator:';' filename in
+  match rows with
+  | [] -> []
+  | header :: data ->
+      (* Trouve l'index de la colonne *)
+      let index = 
+        let rec find i = function
+          | [] -> failwith ("Colonne introuvable : " ^ colonne)
+          | h :: _ when h = colonne -> i
+          | _ :: t -> find (i + 1) t
+        in
+        find 0 header
+      in
+      (* Extrait la colonne *)
+      List.map (fun row -> List.nth row index) data
+
+
 let nom_to_num (nom : string) (noms : string array) : int  = 
   let rec search i =
     if i >= Array.length noms then
