@@ -1,3 +1,5 @@
+#require "csv"
+
 let noms = [|
   "Tour Eiffel";         (* 0  *)
   "Arc de Triomphe";     (* 1  *)
@@ -50,22 +52,19 @@ let voisins = [|
 |]
 
 
-let get_column_by_name (filename : string) (colonne : string) : array =
+let get_column_by_name (filename : string) (colonne : string) : 'b array  =
   let rows = Csv.load ~separator:';' filename in
   match rows with
-  | [] -> []
+  | [] -> [||]
   | header :: data ->
       (* Trouve l'index de la colonne *)
-      let index = 
-        let rec find i = function
+        let rec find (l: string list) (i : int) : int = 
+          match l with 
+          | h :: q -> if (h = colonne) then i else find q (i+1)
           | [] -> failwith ("Colonne introuvable : " ^ colonne)
-          | h :: _ when h = colonne -> i
-          | _ :: t -> find (i + 1) t
-        in
-        find 0 header
       in
       (* Extrait la colonne *)
-      List.map (fun row -> List.nth row index) data
+      Array.of_list (List.map (fun row -> List.nth row (find header 0)) data)
 
 
 let nom_to_num (nom : string) (noms : string array) : int  = 
