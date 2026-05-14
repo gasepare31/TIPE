@@ -1,5 +1,6 @@
 #require "csv"
 
+(*
 let noms = [|
   "Tour Eiffel";         (* 0  *)
   "Arc de Triomphe";     (* 1  *)
@@ -50,7 +51,7 @@ let voisins = [|
   [|(0, 0.7)|];                                   (* 12 Trocadéro *)
   [|(0, 0.4)|];                                   (* 13 Champ-de-Mars *)
 |]
-
+*)
 
 let get_column_by_name (filename : string) (colonne : string) : 'b array  =
   let rows = Csv.load ~separator:';' filename in
@@ -65,6 +66,18 @@ let get_column_by_name (filename : string) (colonne : string) : 'b array  =
       in
       (* Extrait la colonne *)
       Array.of_list (List.map (fun row -> List.nth row (find header 0)) data)
+
+let noms = get_column_by_name ("Monuments.csv") ("Nom du monument") 
+
+let coord () = 
+  let rec ajout (l1 : float list ) (l2 : float list ) : float list = 
+    match l1, l2 with
+    | a :: b, c :: d -> (a, c) :: ajout b d 
+    | [], [] -> ()
+  in Array.of_list(ajout (get_column_by_name ("Monuments.csv") ("Latitude")) (get_column_by_name ("Monuments.") ("Longitude")))
+
+let coords = coord ()
+
 
 
 let nom_to_num (nom : string) (noms : string array) : int  = 
