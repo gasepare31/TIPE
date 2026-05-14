@@ -64,15 +64,16 @@ let get_column_by_name (filename : string) (colonne : string) : 'b array  =
           | h :: q -> if (h = colonne) then i else find q (i+1)
           | [] -> failwith ("Colonne introuvable : " ^ colonne)
       in
+      let index_colonne = find header 0 in
       (* Extrait la colonne *)
       Array.of_list (List.map (fun row -> List.nth row (find header 0)) data)
 
 let noms = get_column_by_name ("Monuments.csv") ("Nom du monument") 
 
 let coord () = 
-  let rec ajout (l1 : float list ) (l2 : float list ) : float list = 
+  let rec ajout (l1 : string list ) (l2 : string list ) : float list = 
     match l1, l2 with
-    | a :: b, c :: d -> (a, c) :: ajout b d 
+    | a :: b, c :: d -> (float_of_string a, float_of_string c) :: ajout b d 
     | [], [] -> ()
   in Array.of_list(ajout (get_column_by_name ("Monuments.csv") ("Latitude")) (get_column_by_name ("Monuments.") ("Longitude")))
 
