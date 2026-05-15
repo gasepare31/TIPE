@@ -73,15 +73,9 @@ let noms = Array.of_list (get_column_by_name ("Monuments.csv") ("Nom du monument
 let coord () = 
   let rec ajout (l1 : string list ) (l2 : string list ) : (float*float) list = 
     match l1, l2 with
-<<<<<<< Updated upstream
-    | a :: b, c :: d -> (float_of_string a, float_of_string c) :: ajout b d 
-    | [], [] -> []
-  in Array.of_list(ajout (get_column_by_name ("Monuments.csv") ("Latitude")) (get_column_by_name ("Monuments.csv") ("Longitude")))
-=======
     | a :: b, c :: d -> (Float.of_string (a), Float.of_string (c)) :: ajout b d 
     | [], [] -> []
   in Array.of_list(ajout (get_column_by_name ("Monuments.csv") ("Latitude")) (get_column_by_name ("Monuments.") ("Longitude")))
->>>>>>> Stashed changes
 
 let coords = coord ()
 
