@@ -66,7 +66,7 @@ let get_column_by_name (filename : string) (colonne : string) : 'b array  =
       in
       let index_colonne = find header 0 in
       (* Extrait la colonne *)
-      Array.of_list (List.map (fun row -> List.nth row (find header 0)) data)
+      Array.of_list (List.map (fun row -> List.nth row index_colonne) data)
 
 let noms = get_column_by_name ("Monuments.csv") ("Nom du monument") 
 
