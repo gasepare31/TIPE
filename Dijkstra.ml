@@ -53,33 +53,39 @@ let voisins = [|
 |]
 *)
 
-let get_column_by_name (filename : string) (colonne : string) : 'b array  =
-  let rows = Csv.load ~separator:';' filename in
+let get_column_by_name (filename : string) (colonne : string) : string list =
+  let rows = Csv.load ~separator:',' filename in
   match rows with
-  | [] -> [||]
+  | [] -> [] (* On renvoie une liste vide, et non un tuple [],[] *)
   | header :: data ->
       (* Trouve l'index de la colonne *)
-        let rec find (l: string list) (i : int) : int = 
-          match l with 
-          | h :: q -> if (h = colonne) then i else find q (i+1)
-          | [] -> failwith ("Colonne introuvable : " ^ colonne)
+      let rec find (l: string list) (i : int) : int = 
+        match l with 
+        | h :: q -> if (h = colonne) then i else find q (i+1)
+        | [] -> failwith ("Colonne introuvable : " ^ colonne)
       in
       let index_colonne = find header 0 in
-      (* Extrait la colonne *)
-      Array.of_list (List.map (fun row -> List.nth row index_colonne) data)
+      (* Extrait la colonne. Renvoie naturellement une 'string list' *)
+      List.map (fun row -> List.nth row index_colonne) data
 
-let noms = get_column_by_name ("Monuments.csv") ("Nom du monument") 
+let noms = Array.of_list (get_column_by_name ("Monuments.csv") ("Nom du monument"))
 
 let coord () = 
-  let rec ajout (l1 : string list ) (l2 : string list ) : float list = 
+  let rec ajout (l1 : string list ) (l2 : string list ) : (float*float) list = 
     match l1, l2 with
+<<<<<<< Updated upstream
     | a :: b, c :: d -> (float_of_string a, float_of_string c) :: ajout b d 
     | [], [] -> []
   in Array.of_list(ajout (get_column_by_name ("Monuments.csv") ("Latitude")) (get_column_by_name ("Monuments.csv") ("Longitude")))
+=======
+    | a :: b, c :: d -> (Float.of_string (a), Float.of_string (c)) :: ajout b d 
+    | [], [] -> []
+  in Array.of_list(ajout (get_column_by_name ("Monuments.csv") ("Latitude")) (get_column_by_name ("Monuments.") ("Longitude")))
+>>>>>>> Stashed changes
 
 let coords = coord ()
 
-let voisins = get_column_by_name ("Monuments.csv") ("Voisins")
+let voisins = Array.of_list (get_column_by_name ("Monuments.csv") ("Voisins"))
 
 
 let nom_to_num (nom : string) (noms : string array) : int  = 
