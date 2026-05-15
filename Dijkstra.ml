@@ -79,6 +79,7 @@ let coord () =
 
 let coords = coord ()
 
+let voisins = get_column_by_name ("Monuments.csv") ("Voisins")
 
 
 let nom_to_num (nom : string) (noms : string array) : int  = 
