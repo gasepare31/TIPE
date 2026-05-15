@@ -74,8 +74,8 @@ let coord () =
   let rec ajout (l1 : string list ) (l2 : string list ) : float list = 
     match l1, l2 with
     | a :: b, c :: d -> (float_of_string a, float_of_string c) :: ajout b d 
-    | [], [] -> ()
-  in Array.of_list(ajout (get_column_by_name ("Monuments.csv") ("Latitude")) (get_column_by_name ("Monuments.") ("Longitude")))
+    | [], [] -> []
+  in Array.of_list(ajout (get_column_by_name ("Monuments.csv") ("Latitude")) (get_column_by_name ("Monuments.csv") ("Longitude")))
 
 let coords = coord ()
 
