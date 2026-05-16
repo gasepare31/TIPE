@@ -23,7 +23,7 @@ for idx, row in df.iterrows() :
         long2 = df.loc[voisin_id, 'Longitude'] #on récupère les coordonnées de ce voisin
         lat2 = df.loc [voisin_id, 'Latitude']
 
-        plt.plot([long1, long2], [lat1, lat2], color='blue', alpha=0.3, linewidth=0.8)
+        plt.plot([long1, long2], [lat1, lat2], color='grey', alpha=0.3, linewidth=0.8)
 
 
 plt.scatter(df['Longitude'], df['Latitude'], c='red', marker='o', alpha=0.6, edgecolors='black')
