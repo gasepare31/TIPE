@@ -7,7 +7,7 @@ from geopy.distance import geodesic
 
 coord=[]
 
-with open ('BONNE VERSION.csv', newline = '', encoding='utf-8') as csvfile :
+with open ('Monuments.csv', newline = '', encoding='utf-8') as csvfile :
  reader = csv.DictReader(csvfile)
  for row in reader :
     lat = row['Latitude'].strip()
@@ -45,7 +45,7 @@ for i in range(len(points)):
 #Ecrire les informations dans le fichier csv (crée un nouveau fichier)
 
 #on relit le fichier pour récupérer toutes les lignes
-with open('BONNE VERSION.csv', newline='', encoding='utf-8') as csvfile:
+with open('Monuments.csv', newline='', encoding='utf-8') as csvfile:
     reader = csv.DictReader(csvfile)
     lignes = [row for row in reader if row['Latitude'].strip() and row['Longitude'].strip()]
 
@@ -55,7 +55,7 @@ for i in range(len(lignes)):
     ligne['Voisins'] = str(vois_dist[i])
 
 # Écrire le nouveau fichier
-with open('Monuments.csv', 'w', newline='', encoding='utf-8') as csvfile:
+with open('Monuments_avec_voisins.csv', 'w', newline='', encoding='utf-8') as csvfile:
     fieldnames = reader.fieldnames + ['Voisins']
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
