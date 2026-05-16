@@ -76,16 +76,43 @@ let get_column_by_name (filename : string) (colonne : string) : string list =
 let noms = Array.of_list (get_column_by_name ("Monuments.csv") ("Nom du monument"))
 
 let coord () = 
-  let rec ajout (l1 : string list ) (l2 : string list ) : (float*float) list = 
+  let rec ajout (l1 : string list) (l2 : string list) : (float * float) list = 
     match l1, l2 with
-    | a :: b, c :: d -> (Float.of_string (a), Float.of_string (c)) :: ajout b d 
+    | a :: b, c :: d -> 
+        (match float_of_string_opt a, float_of_string_opt c with
+        | Some lat, Some lon -> (lat, lon) :: ajout b d
+        | _ -> 
+            Printf.printf "Ignoré : lat=%s lon=%s\n%!" a c;
+            ajout b d)
     | [], [] -> []
-    | _ -> []
+    | _, _ -> []
   in Array.of_list(ajout (get_column_by_name ("Monuments.csv") ("Latitude")) (get_column_by_name ("Monuments.csv") ("Longitude")))
+
 
 let coords = coord ()
 
-let voisins = Array.of_list (get_column_by_name ("Monuments.csv") ("Voisins"))
+(* transforme la chaine de caractère en tableau de tuples *)
+let parse_voisins (s : string) : (int * float) array =
+  let s = String.trim s in
+  (* Enlève les crochets *)
+  let s = String.sub s 1 (String.length s - 2) in
+  if String.length s = 0 then [||]
+  else
+    (* Découpe par tuple *)
+    let tuples = String.split_on_char ')' s in
+    let tuples = List.filter (fun t -> String.trim t <> "" && String.trim t <> ",") tuples in
+    Array.of_list (List.filter_map (fun t ->
+      let t = String.trim t in
+      let t = if t.[0] = ',' then String.sub t 1 (String.length t - 1) else t in
+      let t = String.trim t in
+      let t = String.sub t 1 (String.length t - 1) in (* enlève '(' *)
+      match String.split_on_char ',' t with
+      | [a; b] -> Some (int_of_string (String.trim a), float_of_string (String.trim b))
+      | _ -> None
+    ) tuples)
+  
+
+let voisins = Array.map parse_voisins (Array.of_list (get_column_by_name "Monuments.csv" "Voisins"))
 
 
 let nom_to_num (nom : string) (noms : string array) : int  = 
