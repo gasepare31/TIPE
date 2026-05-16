@@ -66,7 +66,12 @@ let get_column_by_name (filename : string) (colonne : string) : string list =
       in
       let index_colonne = find header 0 in
       (* Extrait la colonne. Renvoie naturellement une 'string list' *)
-      List.map (fun row -> List.nth row index_colonne) data
+      List.filter_map (fun row -> 
+        if List.length row > index_colonne then
+            Some (List.nth row index_colonne)
+        else
+            None
+    ) data
 
 let noms = Array.of_list (get_column_by_name ("Monuments.csv") ("Nom du monument"))
 
@@ -75,6 +80,7 @@ let coord () =
     match l1, l2 with
     | a :: b, c :: d -> (Float.of_string (a), Float.of_string (c)) :: ajout b d 
     | [], [] -> []
+    | _ -> []
   in Array.of_list(ajout (get_column_by_name ("Monuments.csv") ("Latitude")) (get_column_by_name ("Monuments.csv") ("Longitude")))
 
 let coords = coord ()
