@@ -112,7 +112,7 @@ let parse_voisins (s : string) : (int * float) array =
     ) tuples)
   
 
-let voisins = Array.map parse_voisins (Array.of_list (get_column_by_name "Monuments.csv" "Voisins"))
+let voisins = Array.map parse_voisins (Array.of_list (get_column_by_name "Monuments_avec_voisins.csv" "Voisins"))
 
 
 let nom_to_num (nom : string) (noms : string array) : int  = 
