@@ -12,6 +12,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # ──────────────────────────────────────────────────────────────────────────────
 # 1. Préparation des données
 # ──────────────────────────────────────────────────────────────────────────────
+print("Exécution de TIPE.py...")
+subprocess.run([sys.executable, "TIPE.py"], check=True)
+
 df = pd.read_csv("Monuments_avec_voisins.csv")
 
 def parse_voisins(val):
