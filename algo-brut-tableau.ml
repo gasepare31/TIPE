@@ -1,4 +1,4 @@
-let noms = [|
+(*let noms = [|
   "Tour Eiffel";         (* 0  *)
   "Arc de Triomphe";     (* 1  *)
   "Champs-Élysées";      (* 2  *)
@@ -49,6 +49,70 @@ let voisins = [|
   [|(0, 0.7)|];                                   (* 12 Trocadéro *)
   [|(0, 0.4)|];                                   (* 13 Champ-de-Mars *)
 |]
+  *)
+
+#require "csv"
+
+let get_column_by_name (filename : string) (colonne : string) : string list =
+  let rows = Csv.load ~separator:',' filename in
+  match rows with
+  | [] -> [] (* On renvoie une liste vide, et non un tuple [],[] *)
+  | header :: data ->
+      (* Trouve l'index de la colonne *)
+      let rec find (l: string list) (i : int) : int = 
+        match l with 
+        | h :: q -> if (h = colonne) then i else find q (i+1)
+        | [] -> failwith ("Colonne introuvable : " ^ colonne)
+      in
+      let index_colonne = find header 0 in
+      (* Extrait la colonne. Renvoie naturellement une 'string list' *)
+      List.filter_map (fun row -> 
+        if List.length row > index_colonne then
+            Some (List.nth row index_colonne)
+        else
+            None
+    ) data
+
+let noms = Array.of_list (get_column_by_name ("Monuments.csv") ("Nom du monument"))
+
+let coord () = 
+  let rec ajout (l1 : string list) (l2 : string list) : (float * float) list = 
+    match l1, l2 with
+    | a :: b, c :: d -> 
+        (match float_of_string_opt a, float_of_string_opt c with
+        | Some lat, Some lon -> (lat, lon) :: ajout b d
+        | _ -> 
+            Printf.printf "Ignoré : lat=%s lon=%s\n%!" a c;
+            ajout b d)
+    | [], [] -> []
+    | _, _ -> []
+  in Array.of_list(ajout (get_column_by_name ("Monuments.csv") ("Latitude")) (get_column_by_name ("Monuments.csv") ("Longitude")))
+
+
+let coords = coord ()
+
+(* transforme la chaine de caractère en tableau de tuples *)
+let parse_voisins (s : string) : (int * float) array =
+  let s = String.trim s in
+  (* Enlève les crochets *)
+  let s = String.sub s 1 (String.length s - 2) in
+  if String.length s = 0 then [||]
+  else
+    (* Découpe par tuple *)
+    let tuples = String.split_on_char ')' s in
+    let tuples = List.filter (fun t -> String.trim t <> "" && String.trim t <> ",") tuples in
+    Array.of_list (List.filter_map (fun t ->
+      let t = String.trim t in
+      let t = if t.[0] = ',' then String.sub t 1 (String.length t - 1) else t in
+      let t = String.trim t in
+      let t = String.sub t 1 (String.length t - 1) in (* enlève '(' *)
+      match String.split_on_char ',' t with
+      | [a; b] -> Some (int_of_string (String.trim a), float_of_string (String.trim b))
+      | _ -> None
+    ) tuples)
+  
+
+let voisins = Array.map parse_voisins (Array.of_list (get_column_by_name "Monuments_avec_voisins.csv" "Voisins"))
 
 let n = Array.length noms
 
@@ -122,6 +186,11 @@ let chemin_force_brute (depart : string) (arrivee : string) : string list * floa
   else
   let chemin_noms = Array.map (fun idx -> noms.(idx)) !meilleur_chemin in
   (Array.to_list chemin_noms, !meilleur_distance)
+
+let time f : float =
+  let a = Sys.time() in
+  f(); 
+  let b = Sys.time() in (b-.a)
 
 
 (* TEST DE L'ALGO *)
