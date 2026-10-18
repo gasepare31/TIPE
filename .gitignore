@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# OCaml / compilation
+*.cmi
+*.cmx
+*.cmo
+*.o
+*.a
+*.annot
+*.byte
+*.native
+dijkstra_exec
+
+# Sorties générées
+resultats_dijkstra.txt
+Monuments_avec_voisins.csv
