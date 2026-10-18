@@ -35,11 +35,3 @@ Depuis la racine du dépôt :
     python3 interface.py
 
 L'interface compile ensuite Dijkstra.ml avec ocamlfind. Les fichiers CSV et le fichier de résultat sont lus ou générés dans le répertoire courant.
-
-## État du dépôt
-
-Les sources, données, résultats et artefacts déjà présents sont conservés. Le fichier .gitignore empêche l'ajout accidentel de nouveaux artefacts de compilation.
-
-## Licence
-
-Aucune licence n'est actuellement déclarée.
